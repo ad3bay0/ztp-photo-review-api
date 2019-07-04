@@ -42,10 +42,10 @@ public class RegistrationController {
 	@PostMapping(value = "/register")
 	public ResponseEntity<?> saveUser(@ApiParam("username & password") @Valid @RequestBody UserDTO user) throws Exception {
 		
-		//if(userRepo.existsByUsername(user.getUsername())) {
+		if(userRepo.existsByUsername(user.getUsername())) {
 			
-			//return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AppResponse("username has been taken, try another one"));
-	//	}
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AppResponse("username has been taken, try another one"));
+		}
 		
 		photoZoneUserDetailsService.save(user);
 		
