@@ -12,9 +12,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import co.ztp.photozone.model.PhotoDTO;
 import co.ztp.photozone.model.UserDTO;
 
 @RunWith(SpringRunner.class)
@@ -41,6 +43,20 @@ public class PhotozoneApplicationTests {
 				.perform(MockMvcRequestBuilders.post("/api/v1/register").contentType(MediaType.APPLICATION_JSON_VALUE).content(objectMapper.writeValueAsString(user))).andExpect(status().is5xxServerError());
 
 		//result.andDo(MockMvcResultHandlers.print());
+		       
+	}
+	
+	@Test
+	public void unAuthorizedUserCreatePhoto() throws Exception {
+		
+		
+		PhotoDTO photo = new PhotoDTO();
+		photo.setUrl("");
+		
+		ResultActions result = mockMvc
+				.perform(MockMvcRequestBuilders.post("/api/v1/photos").contentType(MediaType.APPLICATION_JSON_VALUE).content(objectMapper.writeValueAsString(photo))).andExpect(status().isUnauthorized());
+
+		result.andDo(MockMvcResultHandlers.print());
 		       
 	}
 

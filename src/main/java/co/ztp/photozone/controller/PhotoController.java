@@ -27,6 +27,7 @@ import co.ztp.photozone.model.Rating;
 import co.ztp.photozone.model.RatingDTO;
 import co.ztp.photozone.repo.PhotoRepo;
 import co.ztp.photozone.repo.RatingRepo;
+import co.ztp.photozone.util.AppConstants;
 import co.ztp.photozone.util.AppResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -61,6 +62,16 @@ public class PhotoController {
 	@PostMapping(value="/photos")
 	public ResponseEntity<?> createPhoto(@ApiParam(value = "url", required = true)
 			@Valid @RequestBody PhotoDTO request){
+		
+		if(!AppConstants.isValid(request.getUrl())) {
+			
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AppResponse("invalid photo url"));
+		}
+		
+		if(photoRepo.existsByUrl(request.getUrl())) {
+			
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AppResponse("Photo url already exist"));
+		}
 		
 		Photo photo = new Photo();
 		photo.setUrl(request.getUrl());

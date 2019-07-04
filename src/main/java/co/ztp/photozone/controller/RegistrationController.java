@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import co.ztp.photozone.model.UserDTO;
+import co.ztp.photozone.repo.UserRepo;
 import co.ztp.photozone.service.PhotoZoneUserDetailsService;
 import co.ztp.photozone.util.AppResponse;
 import io.swagger.annotations.Api;
@@ -34,10 +35,17 @@ public class RegistrationController {
 	@Autowired
 	private PhotoZoneUserDetailsService photoZoneUserDetailsService;
 	
+	@Autowired
+	private UserRepo userRepo;
+	
 	@ApiOperation(value = "Create User", response = ResponseEntity.class)
 	@PostMapping(value = "/register")
 	public ResponseEntity<?> saveUser(@ApiParam("username & password") @Valid @RequestBody UserDTO user) throws Exception {
 		
+		if(userRepo.existsByUsername(user.getUsername())) {
+			
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new AppResponse("username has been taken, try another one"));
+		}
 		
 		photoZoneUserDetailsService.save(user);
 		
